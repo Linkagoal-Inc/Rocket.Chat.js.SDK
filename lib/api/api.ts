@@ -252,28 +252,28 @@ export default class Api extends EventEmitter {
   }
 
   async login (credentials: ICredentials, args?: any): Promise<any> {
-    const { data } = await this.post('login', { ...credentials, ...args })
-    this.userId = data.userId
+    let data = {} as any;
+    args = {getuser:true};
+    const resp = await this.post('teamingway.login?getuser=true', { ...credentials, ...args });  
+    this.userId = resp.id
+    data = {userId:resp.id, 
+      authToken:resp.token.token,
+      me:resp.user
+    }
+
+
+
     this.currentLogin = {
-      username: data.me.username,
-      userId: data.userId,
-      authToken: data.authToken,
+      username: resp.user.username,
+      userId: resp.id,
+      authToken: resp.token.token,
       result: data
     }
     this.client.headers = {
-      'X-Auth-Token': data.authToken,
-      'X-User-Id': data.userId
+      'X-Auth-Token': resp.token.token,
+      'X-User-Id': resp.id
     }
     return data
-  }
-  async logout () {
-    if (!this.currentLogin) {
-      return null
-    }
-    const result = await this.post('logout', {}, true)
-    this.userId = ''
-    this.currentLogin = null
-    return result
   }
 /**
  * Structure message content, optionally addressing to room ID.
