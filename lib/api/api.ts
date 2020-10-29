@@ -256,6 +256,7 @@ export default class Api extends EventEmitter {
     args = {getuser:true};
     const resp = await this.post('teamingway.login?getuser=true', { ...credentials, ...args });  
     this.userId = resp.id
+    //mycomment for test
     data = {userId:resp.id, 
       authToken:resp.token.token,
       me:resp.user
